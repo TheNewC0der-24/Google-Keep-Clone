@@ -28,7 +28,7 @@ const useStyles = makeStyles({
     }
 })
 
-const NavList = ({ open }) => {
+const NavList = ({ open, setOpen }) => {
 
     const classes = useStyles();
 
@@ -56,6 +56,10 @@ const NavList = ({ open }) => {
         }
     ];
 
+    const handleDrawer = () => {
+        setOpen(true);
+    }
+
     return (
         <List>
             {sidebarLinks.map((list) => (
@@ -71,6 +75,7 @@ const NavList = ({ open }) => {
                             justifyContent: open ? 'initial' : 'center',
                             px: 2.5,
                         }}
+                        onClick={handleDrawer}
                     >
                         <ListItemIcon
                             sx={{
