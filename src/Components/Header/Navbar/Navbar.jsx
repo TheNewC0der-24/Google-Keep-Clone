@@ -30,22 +30,20 @@ const Header = ({ handleDrawer, open }) => {
     const logo = 'https://seeklogo.com/images/G/google-keep-logo-0BC92EBBBD-seeklogo.com.png';
 
     return (
-        <div>
-            <Navbar open={open}>
-                <Toolbar>
-                    <IconButton
-                        onClick={handleDrawer}
-                        edge="start"
-                        sx={{ marginRight: 5 }}>
-                        <MenuIcon />
-                    </IconButton>
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <img src={logo} alt="logo" style={{ width: 30 }} />
-                        <Heading>Keep</Heading>
-                    </Box>
-                </Toolbar>
-            </Navbar>
-        </div>
+        <Navbar open={open}>
+            <Toolbar>
+                <IconButton
+                    onClick={handleDrawer}
+                    edge="start"
+                    sx={{ marginRight: 5 }}>
+                    <MenuIcon />
+                </IconButton>
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <img src={logo} alt="logo" style={{ width: 30 }} />
+                    <Heading>Keep</Heading>
+                </Box>
+            </Toolbar>
+        </Navbar>
     )
 }
 

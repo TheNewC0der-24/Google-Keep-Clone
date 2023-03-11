@@ -66,7 +66,7 @@ const Sidebar = () => {
 
             <Drawer variant="permanent" open={open}>
                 <DrawerHeader></DrawerHeader>
-                <NavList open={open} handleDrawer={handleDrawer} />
+                <NavList open={open} />
             </Drawer>
         </Box>
     );

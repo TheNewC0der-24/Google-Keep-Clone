@@ -63,7 +63,6 @@ const NavList = ({ open }) => {
                     className={location.pathname === list.link ? classes.sideBarActive : ''}
                     onClick={() => {
                         navigate(list.link);
-                        // handleDrawer(list.link);
                     }}
                 >
                     <ListItemButton
