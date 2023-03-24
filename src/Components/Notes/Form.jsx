@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useContext } from 'react';
 
 import {
     Box,
@@ -7,6 +7,8 @@ import {
 } from '@mui/material';
 
 import { styled } from '@mui/material/styles';
+
+import { DataContext } from '../../Context/DataProvider';
 
 const Container = styled(Box)`
     display: flex;
@@ -21,11 +23,20 @@ const Container = styled(Box)`
     min-height: 30px;
 `;
 
+const note = {
+    id: '',
+    title: '',
+    text: '',
+}
+
 const Form = () => {
 
     const [showTextField, setShowTextField] = useState(false);
+    const [addNote, setAddNote] = useState(note);
 
     const containerRef = useRef();
+
+    const { notes, setNotes } = useContext(DataContext);
 
     return (
         <ClickAwayListener onClickAway={() => {
