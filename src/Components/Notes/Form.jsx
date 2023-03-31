@@ -22,6 +22,7 @@ const Container = styled(Box)`
     border-radius: 8px;
     border-color: "#e0e0e0";
     margin: auto;
+    margin-bottom: 2rem;
     min-height: 30px;
 `;
 
