@@ -17,6 +17,7 @@ const openedMixin = (theme) => ({
     }),
     overflowX: 'hidden',
     marginTop: 10,
+    border: 'none'
 });
 
 const closedMixin = (theme) => ({
@@ -30,6 +31,7 @@ const closedMixin = (theme) => ({
         width: `calc(${theme.spacing(8)} + 1px)`,
     },
     marginTop: 10,
+    border: 'none'
 });
 
 const DrawerHeader = styled('div')(({ theme }) => ({
