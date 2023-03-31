@@ -29,7 +29,6 @@ const Heading = styled(Typography)`
 
 
 const Header = ({ handleDrawer, open }) => {
-
     return (
         <Navbar open={open}>
             <Toolbar>
