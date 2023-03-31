@@ -12,6 +12,8 @@ import {
 
 import MenuIcon from '@mui/icons-material/Menu';
 
+import logo from '../../../assets/Images/google-keep-logo.png';
+
 const Navbar = styled(AppBar)`
     z-index: ${props => props.theme.zIndex.drawer + 1};
     background-color: #fff;
@@ -25,9 +27,8 @@ const Heading = styled(Typography)`
     padding: 0 0 0 15px;
 `;
 
-const Header = ({ handleDrawer, open }) => {
 
-    const logo = 'https://seeklogo.com/images/G/google-keep-logo-0BC92EBBBD-seeklogo.com.png';
+const Header = ({ handleDrawer, open }) => {
 
     return (
         <Navbar open={open}>
