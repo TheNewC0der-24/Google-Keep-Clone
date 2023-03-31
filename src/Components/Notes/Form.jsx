@@ -8,6 +8,8 @@ import {
 
 import { styled } from '@mui/material/styles';
 
+import { v4 as uuid } from 'uuid';
+
 import { DataContext } from '../../Context/DataProvider';
 
 const Container = styled(Box)`
@@ -32,16 +34,26 @@ const note = {
 const Form = () => {
 
     const [showTextField, setShowTextField] = useState(false);
-    const [addNote, setAddNote] = useState(note);
+    const [addNote, setAddNote] = useState({ ...note, id: uuid() });
+
+    const { setNotes } = useContext(DataContext);
 
     const containerRef = useRef();
 
-    const { notes, setNotes } = useContext(DataContext);
+    const onTextChange = (e) => {
+        let changedNote = { ...addNote, [e.target.name]: e.target.value }
+        setAddNote(changedNote);
+    }
 
     return (
         <ClickAwayListener onClickAway={() => {
             setShowTextField(false);
             containerRef.current.style.minHeight = '30px';
+
+            setAddNote({ ...note, id: uuid() });
+            if (addNote.title || addNote.text) {
+                setNotes(prevArr => [addNote, ...prevArr]);
+            }
         }}>
             <Container ref={containerRef}>
                 {
@@ -52,6 +64,9 @@ const Form = () => {
                             variant='standard'
                             InputProps={{ disableUnderline: true }}
                             style={{ marginBottom: 10 }}
+                            onChange={(e) => onTextChange(e)}
+                            name='title'
+                            value={addNote.title}
                         />
                     )
                 }
@@ -64,6 +79,9 @@ const Form = () => {
                         setShowTextField(true);
                         containerRef.current.style.minHeight = '70px';
                     }}
+                    onChange={(e) => onTextChange(e)}
+                    name='text'
+                    value={addNote.text}
                 />
             </Container>
         </ClickAwayListener>
