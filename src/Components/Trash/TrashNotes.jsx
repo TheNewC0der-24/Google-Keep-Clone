@@ -46,7 +46,7 @@ const TrashNotes = () => {
                                     justifyContent: 'center',
                                     margin: 'auto',
                                     textTransform: "capitalize"
-                                }} onClick={deleteNote} autoFocus>
+                                }} onClick={deleteNote}>
                                     Empty Trash
                                 </Button>
                             </Box>
