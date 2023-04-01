@@ -2,6 +2,7 @@ import React, { useState, useRef, useContext } from 'react';
 
 import {
     Box,
+    Container as MuiContainer,
     ClickAwayListener,
     TextField
 } from '@mui/material';
@@ -15,8 +16,6 @@ import { DataContext } from '../../Context/DataProvider';
 const Container = styled(Box)`
     display: flex;
     flex-direction: column;
-    max-width: 600px;
-    width: 100%;
     box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%);
     padding: 10px 15px;
     border-radius: 8px;
@@ -56,35 +55,37 @@ const Form = () => {
                 setNotes(prevArr => [addNote, ...prevArr]);
             }
         }}>
-            <Container ref={containerRef}>
-                {
-                    showTextField && (
-                        <TextField
-                            size='small'
-                            placeholder='Title'
-                            variant='standard'
-                            InputProps={{ disableUnderline: true }}
-                            style={{ marginBottom: 10 }}
-                            onChange={(e) => onTextChange(e)}
-                            name='title'
-                            value={addNote.title}
-                        />
-                    )
-                }
-                <TextField
-                    multiline
-                    placeholder='Take a note...'
-                    variant='standard'
-                    InputProps={{ disableUnderline: true }}
-                    onClick={() => {
-                        setShowTextField(true);
-                        containerRef.current.style.minHeight = '70px';
-                    }}
-                    onChange={(e) => onTextChange(e)}
-                    name='text'
-                    value={addNote.text}
-                />
-            </Container>
+            <MuiContainer maxWidth='sm'>
+                <Container ref={containerRef}>
+                    {
+                        showTextField && (
+                            <TextField
+                                size='small'
+                                placeholder='Title'
+                                variant='standard'
+                                InputProps={{ disableUnderline: true }}
+                                style={{ marginBottom: 10 }}
+                                onChange={(e) => onTextChange(e)}
+                                name='title'
+                                value={addNote.title}
+                            />
+                        )
+                    }
+                    <TextField
+                        multiline
+                        placeholder='Take a note...'
+                        variant='standard'
+                        InputProps={{ disableUnderline: true }}
+                        onClick={() => {
+                            setShowTextField(true);
+                            containerRef.current.style.minHeight = '70px';
+                        }}
+                        onChange={(e) => onTextChange(e)}
+                        name='text'
+                        value={addNote.text}
+                    />
+                </Container>
+            </MuiContainer>
         </ClickAwayListener>
     )
 }
