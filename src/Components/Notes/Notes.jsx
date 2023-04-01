@@ -42,7 +42,7 @@ const Notes = () => {
                         <Grid spacing={2} container>
                             {
                                 notes.map(note => (
-                                    <Grid item xs={12} sm={6} md={4} lg={2}>
+                                    <Grid item xs={12} sm={6} md={4} lg={3}>
                                         <Note note={note} />
                                     </Grid>
                                 ))
