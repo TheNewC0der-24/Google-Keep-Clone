@@ -14,6 +14,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 
 import logo from '../../../assets/Images/google-keep-logo.png';
 
+import { useLocation } from 'react-router-dom';
+
 const Navbar = styled(AppBar)`
     z-index: ${props => props.theme.zIndex.drawer + 1};
     background-color: #fff;
@@ -26,8 +28,13 @@ const Heading = styled(Typography)`
     padding: 0 0 0 15px;
 `;
 
+const capitalize = str => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 
 const Header = ({ handleDrawer, open }) => {
+
+    const location = useLocation();
+    const pathName = capitalize(location.pathname.substring(1));
+
     return (
         <Navbar open={open}>
             <Toolbar>
@@ -38,8 +45,10 @@ const Header = ({ handleDrawer, open }) => {
                     <MenuIcon />
                 </IconButton>
                 <Box sx={{ display: "flex", alignItems: "center" }}>
-                    <img src={logo} alt="logo" style={{ width: 30 }} />
-                    <Heading>Keep</Heading>
+                    {
+                        pathName ? "" : <img src={logo} alt="logo" style={{ width: 30 }} />
+                    }
+                    <Heading>{pathName || 'Keep'}</Heading>
                 </Box>
             </Toolbar>
         </Navbar>
