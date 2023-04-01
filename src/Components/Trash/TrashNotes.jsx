@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 
 import TrashNote from './TrashNote';
 
@@ -16,37 +16,61 @@ const TrashNotes = () => {
         setDeletedNotes([]);
     }
 
+    useEffect(() => {
+        const interval = setInterval(() => {
+            const now = Date.now();
+            const filteredNotes = deletedNotes.filter(
+                note => (now - note.createdAt) <= (7 * 24 * 60 * 60 * 1000)
+            );
+            setDeletedNotes(filteredNotes);
+        }, 24 * 60 * 60 * 1000);
+
+        return () => clearInterval(interval);
+    }, [deletedNotes]);
+
     return (
         <React.Fragment>
             {
                 deletedNotes.length === 0 ? (
-                    <Box sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        marginTop: '5rem',
-                    }}>
-                        <DeleteOutlineOutlined sx={{
-                            backgroundSize: '120px 120px',
-                            height: '120px',
-                            margin: '20px',
-                            opacity: '.1',
-                            width: '120px',
-                        }} />
-                        <Typography sx={{ fontSize: '1.375rem' }} align='center' variant="h6" color="#5f6368">
-                            No notes in Trash
-                        </Typography>
-                    </Box>
+                    <React.Fragment>
+                        <Box>
+                            <Typography align='center' variant="subtitle1" sx={{ fontStyle: 'italic' }}>
+                                Notes in Trash are deleted after 7 days.
+                            </Typography>
+                        </Box>
+
+                        <Box sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            marginTop: '8rem',
+                        }}>
+                            <DeleteOutlineOutlined sx={{
+                                backgroundSize: '120px 120px',
+                                height: '120px',
+                                margin: '20px',
+                                opacity: '.1',
+                                width: '120px',
+                            }} />
+                            <Typography sx={{ fontSize: '1.375rem' }} align='center' variant="h6" color="#5f6368">
+                                No notes in Trash
+                            </Typography>
+                        </Box>
+                    </React.Fragment>
                 ) :
                     (
                         <Container maxWidth="lg">
-                            <Box mb={3}>
-                                <Button sx={{
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    margin: 'auto',
-                                    textTransform: "capitalize"
-                                }} onClick={deleteNote}>
+                            <Box mb={3} sx={{
+                                display: "flex",
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                margin: 'auto',
+                                gap: '1rem',
+                            }}>
+                                <Typography variant="subtitle1" sx={{ fontStyle: 'italic' }}>
+                                    Notes in Trash are deleted after 7 days.
+                                </Typography>
+                                <Button sx={{ textTransform: "capitalize" }} onClick={deleteNote}>
                                     Empty Trash
                                 </Button>
                             </Box>
