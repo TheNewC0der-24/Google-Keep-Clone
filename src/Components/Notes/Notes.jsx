@@ -5,7 +5,7 @@ import Note from './Note';
 
 import { DataContext } from '../../Context/DataProvider';
 
-import { Box, Typography, Grid } from '@mui/material';
+import { Box, Typography, Container, Grid } from '@mui/material';
 
 import { LightbulbOutlined } from '@mui/icons-material';
 
@@ -39,15 +39,17 @@ const Notes = () => {
                     </Box>
                 ) :
                     (
-                        <Grid spacing={2} container>
-                            {
-                                notes.map(note => (
-                                    <Grid item xs={12} sm={6} md={4} lg={3}>
-                                        <Note note={note} />
-                                    </Grid>
-                                ))
-                            }
-                        </Grid>
+                        <Container maxWidth="lg">
+                            <Grid spacing={2} container>
+                                {
+                                    notes.map(note => (
+                                        <Grid item xs={12} sm={6} md={4} lg={3}>
+                                            <Note note={note} />
+                                        </Grid>
+                                    ))
+                                }
+                            </Grid>
+                        </Container>
                     )
             }
         </React.Fragment>

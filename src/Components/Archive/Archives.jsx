@@ -4,7 +4,7 @@ import Archive from './Archive';
 
 import { DataContext } from '../../Context/DataProvider';
 
-import { Box, Typography, Grid } from '@mui/material';
+import { Box, Typography, Container, Grid } from '@mui/material';
 
 import { ArchiveOutlined } from '@mui/icons-material';
 
@@ -35,15 +35,17 @@ const Archives = () => {
                     </Box>
                 ) :
                     (
-                        <Grid spacing={2} container>
-                            {
-                                archivedNotes.map(archiveNote => (
-                                    <Grid item xs={12} sm={6} md={4} lg={3}>
-                                        <Archive archiveNote={archiveNote} />
-                                    </Grid>
-                                ))
-                            }
-                        </Grid>
+                        <Container maxWidth="lg">
+                            <Grid spacing={2} container>
+                                {
+                                    archivedNotes.map(archiveNote => (
+                                        <Grid item xs={12} sm={6} md={4} lg={3}>
+                                            <Archive archiveNote={archiveNote} />
+                                        </Grid>
+                                    ))
+                                }
+                            </Grid>
+                        </Container>
                     )
             }
         </React.Fragment>
