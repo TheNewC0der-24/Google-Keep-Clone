@@ -20,7 +20,7 @@ const Archives = () => {
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
-                        marginTop: '5rem',
+                        marginTop: '8rem',
                     }}>
                         <ArchiveOutlined sx={{
                             backgroundSize: '120px 120px',
