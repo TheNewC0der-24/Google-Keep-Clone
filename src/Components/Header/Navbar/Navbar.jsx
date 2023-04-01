@@ -17,7 +17,6 @@ import logo from '../../../assets/Images/google-keep-logo.png';
 const Navbar = styled(AppBar)`
     z-index: ${props => props.theme.zIndex.drawer + 1};
     background-color: #fff;
-    height: 70px;
     box-shadow: inset 0 -1px 0 0 #dadce0;
 `;
 
