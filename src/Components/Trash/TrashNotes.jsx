@@ -26,6 +26,7 @@ const TrashNotes = () => {
         }, 24 * 60 * 60 * 1000);
 
         return () => clearInterval(interval);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [deletedNotes]);
 
     return (
