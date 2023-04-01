@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 
 import { Card, CardActions, CardContent, IconButton, Typography, Tooltip } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 import { ArchiveOutlined, DeleteOutlineOutlined } from '@mui/icons-material';
 
+import { DataContext } from '../../Context/DataProvider';
 
 const NoteCard = styled(Card)`
     box-shadow: none;
@@ -15,6 +16,20 @@ const NoteCard = styled(Card)`
 const Note = ({ note }) => {
 
     const [showActions, setShowActions] = useState(false);
+
+    const { notes, setNotes, setArchivedNotes, setDeletedNotes } = useContext(DataContext);
+
+    const archiveNote = (note) => {
+        const updatedNotes = notes.filter(data => data.id !== note.id);
+        setNotes(updatedNotes);
+        setArchivedNotes(prevArr => [...prevArr, note]);
+    }
+
+    const deleteNote = (note) => {
+        const updatedNotes = notes.filter(data => data.id !== note.id);
+        setNotes(updatedNotes);
+        setDeletedNotes(prevArr => [...prevArr, note]);
+    }
 
     return (
         <NoteCard
@@ -27,12 +42,18 @@ const Note = ({ note }) => {
             </CardContent>
             <CardActions sx={{ display: "flex", justifyContent: "end", marginLeft: "auto" }}>
                 <Tooltip title="Archive">
-                    <IconButton sx={{ visibility: showActions ? 'visible' : 'hidden' }}>
+                    <IconButton
+                        sx={{ visibility: showActions ? 'visible' : 'hidden' }}
+                        onClick={() => archiveNote(note)}
+                    >
                         <ArchiveOutlined fontSize='small' />
                     </IconButton>
                 </Tooltip>
                 <Tooltip title="Delete">
-                    <IconButton sx={{ visibility: showActions ? 'visible' : 'hidden' }}>
+                    <IconButton
+                        sx={{ visibility: showActions ? 'visible' : 'hidden' }}
+                        onClick={() => deleteNote(note)}
+                    >
                         <DeleteOutlineOutlined fontSize='small' />
                     </IconButton>
                 </Tooltip>
