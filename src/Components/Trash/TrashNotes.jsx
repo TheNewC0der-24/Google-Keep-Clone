@@ -1,10 +1,19 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 
 import TrashNote from './TrashNote';
 
 import { DataContext } from '../../Context/DataProvider';
 
-import { Box, Typography, Grid, Container, Button } from '@mui/material';
+import {
+    Box,
+    Typography,
+    Grid,
+    Container,
+    Dialog,
+    DialogTitle,
+    DialogActions,
+    Button
+} from '@mui/material';
 
 import { DeleteOutlineOutlined } from '@mui/icons-material';
 
@@ -12,8 +21,19 @@ const TrashNotes = () => {
 
     const { deletedNotes, setDeletedNotes } = useContext(DataContext);
 
+    const [openModal, setOpenModal] = useState(false);
+
+    const handleOpenModal = () => {
+        setOpenModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setOpenModal(false);
+    };
+
     const deleteNote = () => {
         setDeletedNotes([]);
+        handleCloseModal();
     }
 
     useEffect(() => {
@@ -61,17 +81,18 @@ const TrashNotes = () => {
                 ) :
                     (
                         <Container maxWidth="lg">
-                            <Box mb={3} sx={{
+                            <Box sx={{
                                 display: "flex",
                                 justifyContent: 'center',
                                 alignItems: 'center',
                                 margin: 'auto',
                                 gap: '1rem',
+                                mb: 3
                             }}>
                                 <Typography variant="subtitle1" sx={{ fontStyle: 'italic' }}>
                                     Notes in Trash are deleted after 7 days.
                                 </Typography>
-                                <Button sx={{ textTransform: "capitalize" }} onClick={deleteNote}>
+                                <Button sx={{ textTransform: "capitalize" }} onClick={handleOpenModal}>
                                     Empty Trash
                                 </Button>
                             </Box>
@@ -88,7 +109,23 @@ const TrashNotes = () => {
                         </Container>
                     )
             }
-        </React.Fragment>
+
+            <Dialog
+                open={openModal}
+                onClose={handleCloseModal}
+                sx={{ '& .MuiDialog-paper': { width: { xs: '300px', sm: '300px', md: '400px' }, maxWidth: { sm: '50%', md: '70%', lg: '90%' } } }}
+            >
+                <DialogTitle sx={{ fontSize: ".875rem", color: "#3c4043" }}>
+                    Empty trash? All notes in Trash will be permanently deleted.
+                </DialogTitle>
+                <DialogActions>
+                    <Button variant='dark' onClick={handleCloseModal}>Cancel</Button>
+                    <Button onClick={deleteNote} autoFocus>
+                        Empty Trash
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </React.Fragment >
     )
 }
 
