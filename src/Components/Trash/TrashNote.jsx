@@ -85,10 +85,9 @@ const TrashNote = ({ trashNote }) => {
             <Dialog
                 open={openModal}
                 onClose={handleCloseModal}
-                // sx={{ '& .MuiDialog-paper': { width: '400px', maxWidth: '90%' } }}
                 sx={{ '& .MuiDialog-paper': { width: { xs: '300px', sm: '300px', md: '400px' }, maxWidth: { sm: '50%', md: '70%', lg: '90%' } } }}
             >
-                <DialogTitle sx={{ fontSize: "18px" }}>
+                <DialogTitle sx={{ fontSize: ".875rem", color: "#3c4043" }}>
                     Delete note forever?
                 </DialogTitle>
                 <DialogActions>
