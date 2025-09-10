@@ -2,10 +2,11 @@ import React, { useContext, useEffect, useState, useCallback } from 'react';
 
 import Form from './Form';
 import Note from './Note';
+import Editor from './Editor';
 
 import { DataContext } from '../../Context/DataProvider';
 
-import { Box, Typography, Container, Grid, Dialog, DialogTitle, DialogContent } from '@mui/material';
+import { Box, Typography, Container, Grid, Dialog, DialogTitle, DialogContent, Divider, List, ListItem, ListItemText } from '@mui/material';
 
 import { LightbulbOutlined } from '@mui/icons-material';
 
@@ -23,8 +24,10 @@ const Notes = () => {
 
     const { notes, setNotes } = useContext(DataContext);
     const [selectedIndex, setSelectedIndex] = useState(0);
+    const [mode, setMode] = useState('create'); // 'create' | 'neutral' | 'view' | 'edit'
     const [openDialog, setOpenDialog] = useState(false);
     const [openedNote, setOpenedNote] = useState(null);
+    const [query, setQuery] = useState('');
 
     const clampIndex = useCallback((idx) => {
         if (notes.length === 0) return 0;
@@ -41,6 +44,19 @@ const Notes = () => {
         setNotes(items);
     }
 
+    // Receive search queries from Navbar
+    useEffect(() => {
+        const onSearch = (e) => setQuery(e.detail || '');
+        window.addEventListener('notes-search', onSearch);
+        return () => window.removeEventListener('notes-search', onSearch);
+    }, []);
+
+    const filteredNotes = notes.filter(n => {
+        const q = query.trim().toLowerCase();
+        if (!q) return true;
+        return (n.title || '').toLowerCase().includes(q) || (n.text || '').toLowerCase().includes(q);
+    });
+
     // Global keyboard shortcuts
     useEffect(() => {
         const onKeyDown = (e) => {
@@ -48,37 +64,42 @@ const Notes = () => {
             const tag = document.activeElement?.tagName?.toLowerCase();
             const isTyping = tag === 'input' || tag === 'textarea';
 
+            // Global shortcuts only in neutral mode
+            if (mode !== 'neutral') return;
+
             // C: create/open form
             if (!isTyping && (e.key === 'c' || e.key === 'C')) {
                 e.preventDefault();
-                window.dispatchEvent(new Event('open-note-form'));
+                setMode('create');
                 return;
             }
 
-            // J / K navigation
+            // J / K navigation – move selection and keep neutral mode; show read-only
             if (!isTyping && (e.key === 'j' || e.key === 'k' || e.key === 'J' || e.key === 'K')) {
                 e.preventDefault();
-                setSelectedIndex((prev) => clampIndex(prev + (e.key.toLowerCase() === 'j' ? 1 : -1)));
+                const direction = e.key.toLowerCase() === 'j' ? 1 : -1;
+                const max = Math.max(filteredNotes.length - 1, 0);
+                const next = Math.min(Math.max(selectedIndex + direction, 0), max);
+                setSelectedIndex(next);
                 return;
             }
 
-            // Enter to open selected note
-            if (!isTyping && e.key === 'Enter' && notes.length > 0) {
+            // Enter to open selected note in edit mode
+            if (!isTyping && e.key === 'Enter' && filteredNotes.length > 0) {
                 e.preventDefault();
-                const note = notes[clampIndex(selectedIndex)];
-                setOpenedNote(note);
-                setOpenDialog(true);
+                const idx = clampIndex(selectedIndex);
+                setSelectedIndex(idx);
+                setMode('edit');
                 return;
             }
         };
 
         window.addEventListener('keydown', onKeyDown);
         return () => window.removeEventListener('keydown', onKeyDown);
-    }, [notes, selectedIndex, clampIndex]);
+    }, [filteredNotes, selectedIndex, clampIndex, mode]);
 
     return (
         <React.Fragment>
-            <Form />
 
             {
                 notes.length === 0 ? (
@@ -101,34 +122,53 @@ const Notes = () => {
                     </Box>
                 ) :
                     (
-                        <Container maxWidth="lg">
-                            <DragDropContext onDragEnd={onDragEnd}>
-                                <Droppable droppableId="droppable">
-                                    {(provided) => (
-                                        <Grid spacing={2} container
-                                            {...provided.droppableProps}
-                                            ref={provided.innerRef}
-                                        >
-                                            {
-                                                notes.map((note, index) => (
-                                                    <Draggable key={note.id} draggableId={note.id} index={index}>
-                                                        {(provided) => (
-                                                            <Grid item xs={12} sm={6} md={4} lg={3}
-                                                                ref={provided.innerRef}
-                                                                {...provided.draggableProps}
-                                                                {...provided.dragHandleProps}
-                                                                sx={{ outline: index === selectedIndex ? '2px solid #1976d2' : 'none', outlineOffset: '2px', borderRadius: '8px' }}
-                                                            >
-                                                                <Note note={note} />
-                                                            </Grid>
-                                                        )}
-                                                    </Draggable>
-                                                ))
-                                            }
-                                        </Grid>
-                                    )}
-                                </Droppable>
-                            </DragDropContext>
+                        <Container maxWidth="xl">
+                            <Grid container spacing={2}>
+                                <Grid item xs={12} md={4} lg={3} sx={{ borderRight: '1px solid', borderColor: 'divider' }}>
+                                    <List sx={{ p: 0 }}>
+                                        {filteredNotes.map((note, index) => (
+                                            <ListItem key={note.id} selected={index === selectedIndex} button onClick={() => { setSelectedIndex(index); setMode('neutral'); }} sx={{ alignItems: 'flex-start' }}>
+                                                <ListItemText
+                                                    primary={<Typography variant="subtitle1" noWrap>{note.title || '(no title)'}</Typography>}
+                                                    secondary={<Typography variant="body2" color="text.secondary" noWrap>{note.text}</Typography>}
+                                                />
+                                            </ListItem>
+                                        ))}
+                                    </List>
+                                </Grid>
+                                <Grid item xs={12} md={8} lg={9}>
+                                    <Box sx={{ p: 2, height: '100%', display: 'flex', flexDirection: 'column' }}>
+                                        {mode === 'create' && (
+                                            <Editor
+                                                mode='create'
+                                                onSave={(note) => {
+                                                    setNotes(prev => [note, ...prev]);
+                                                    setMode('neutral');
+                                                }}
+                                                onCancel={() => setMode('neutral')}
+                                            />
+                                        )}
+                                        {(mode === 'view' || mode === 'neutral') && filteredNotes[selectedIndex] && (
+                                            <Editor
+                                                mode='view'
+                                                initialNote={filteredNotes[selectedIndex]}
+                                            />
+                                        )}
+                                        {mode === 'edit' && filteredNotes[selectedIndex] && (
+                                            <Editor
+                                                mode='edit'
+                                                initialNote={filteredNotes[selectedIndex]}
+                                                onSave={(updated) => {
+                                                    setNotes(prev => prev.map(n => n.id === updated.id ? updated : n));
+                                                    setMode('neutral');
+                                                }}
+                                                onCancel={() => setMode('neutral')}
+                                            />
+                                        )}
+                                        {mode === 'neutral' && null}
+                                    </Box>
+                                </Grid>
+                            </Grid>
                         </Container>
                     )
             }

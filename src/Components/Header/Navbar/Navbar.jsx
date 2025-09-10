@@ -8,6 +8,8 @@ import {
     IconButton,
     Typography,
     Box,
+    TextField,
+    InputAdornment,
 } from '@mui/material';
 
 import MenuIcon from '@mui/icons-material/Menu';
@@ -44,11 +46,24 @@ const Header = ({ handleDrawer, open }) => {
                     sx={{ marginRight: 5 }}>
                     <MenuIcon />
                 </IconButton>
-                <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Box sx={{ display: "flex", alignItems: "center", width: '100%' }}>
                     {
                         pathName ? "" : <img src={logo} alt="logo" style={{ width: 30 }} />
                     }
-                    <Heading>{pathName || 'Keep'}</Heading>
+                    <Heading>notedude</Heading>
+                    <Box sx={{ flexGrow: 1 }} />
+                    <TextField
+                        size="small"
+                        placeholder="Search notes"
+                        variant="outlined"
+                        onChange={(e) => {
+                            const query = e.target.value;
+                            window.dispatchEvent(new CustomEvent('notes-search', { detail: query }));
+                        }}
+                        InputProps={{
+                            startAdornment: <InputAdornment position="start">🔎</InputAdornment>,
+                        }}
+                    />
                 </Box>
             </Toolbar>
         </Navbar>

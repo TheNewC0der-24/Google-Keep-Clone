@@ -16,16 +16,14 @@ import { DataContext } from '../../Context/DataProvider';
 const Container = styled(Box)(({ theme }) => ({
     display: 'flex',
     flexDirection: 'column',
-    boxShadow: theme.palette.mode === 'dark' 
-        ? '0 1px 2px 0 rgba(255,255,255,0.1), 0 2px 6px 2px rgba(255,255,255,0.05)'
-        : '0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%)',
-    padding: '10px 15px',
-    borderRadius: '8px',
-    borderColor: theme.palette.mode === 'dark' ? '#333333' : '#e0e0e0',
-    margin: 'auto',
-    marginBottom: '2rem',
+    boxShadow: 'none',
+    padding: 0,
+    borderRadius: 0,
+    border: 'none',
+    margin: 0,
     minHeight: '30px',
-    backgroundColor: theme.palette.background.paper,
+    backgroundColor: 'transparent',
+    width: '100%',
 }));
 
 const note = {
@@ -34,10 +32,10 @@ const note = {
     text: '',
 }
 
-const Form = () => {
+const Form = ({ mode = 'create', forceOpen = false, initialNote = null, onSave, onCancel }) => {
 
-    const [showTextField, setShowTextField] = useState(false);
-    const [addNote, setAddNote] = useState({ ...note, id: uuid() });
+    const [showTextField, setShowTextField] = useState(forceOpen);
+    const [addNote, setAddNote] = useState(() => initialNote ? { ...initialNote } : { ...note, id: uuid() });
 
     const { setNotes } = useContext(DataContext);
 
@@ -55,29 +53,52 @@ const Form = () => {
     };
 
     const saveAndClose = () => {
-        setShowTextField(false);
-        if (containerRef.current) containerRef.current.style.minHeight = '30px';
+        setShowTextField(forceOpen ? true : false);
+        if (containerRef.current) containerRef.current.style.minHeight = forceOpen ? '70px' : '30px';
         if (addNote.title || addNote.text) {
-            setNotes(prevArr => [addNote, ...prevArr]);
+            if (onSave) {
+                onSave(addNote);
+            } else {
+                setNotes(prevArr => [addNote, ...prevArr]);
+            }
+        } else {
+            // empty -> cancel
+            if (onCancel) onCancel();
         }
-        setAddNote({ ...note, id: uuid() });
+        setAddNote(initialNote ? { ...initialNote } : { ...note, id: uuid() });
         // Ensure inputs are blurred so global shortcuts work immediately
         if (document.activeElement && typeof document.activeElement.blur === 'function') {
             document.activeElement.blur();
         }
     };
 
-    // Listen for global request to open form (from shortcuts)
+    // Listen for global request to open form (from shortcuts) only if not forced open
     useEffect(() => {
+        if (forceOpen) return;
         const handler = () => openForm();
         window.addEventListener('open-note-form', handler);
         return () => window.removeEventListener('open-note-form', handler);
-    }, []);
+    }, [forceOpen]);
 
-    // Close editor on global Escape even if input isn't focused
+    // If initialNote changes (switching selection), load it
+    useEffect(() => {
+        if (initialNote) {
+            setAddNote({ ...initialNote });
+            setShowTextField(true);
+            if (containerRef.current) containerRef.current.style.minHeight = '70px';
+        }
+    }, [initialNote]);
+
+    // Global shortcuts while composing a note: Esc to close, Cmd/Ctrl+Enter to save & close
     useEffect(() => {
         const onKeyDown = (e) => {
-            if (e.key === 'Escape' && showTextField) {
+            if (!showTextField) return;
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                saveAndClose();
+                return;
+            }
+            if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
                 e.preventDefault();
                 saveAndClose();
             }
@@ -104,7 +125,19 @@ const Form = () => {
                                 placeholder='Title'
                                 variant='standard'
                                 InputProps={{ disableUnderline: true }}
-                                style={{ marginBottom: 10 }}
+                                sx={{
+                                    mb: 1,
+                                    '& .MuiInputBase-input': (theme) => ({
+                                        ...theme.typography.h6,
+                                        lineHeight: 1.25,
+                                        padding: 0,
+                                        color: theme.palette.text.primary,
+                                    }),
+                                    '& .MuiInputBase-input::placeholder': (theme) => ({
+                                        color: theme.palette.text.secondary,
+                                        opacity: 1,
+                                    }),
+                                }}
                                 onChange={(e) => onTextChange(e)}
                                 name='title'
                                 value={addNote.title}
@@ -130,8 +163,22 @@ const Form = () => {
                         name='text'
                         value={addNote.text}
                         inputRef={textRef}
+                        minRows={12}
+                        sx={{
+                            flexGrow: 1,
+                            '& .MuiInputBase-input': (theme) => ({
+                                ...theme.typography.body1,
+                                padding: 0,
+                                whiteSpace: 'pre-wrap',
+                                color: theme.palette.text.primary,
+                            }),
+                            '& .MuiInputBase-input::placeholder': (theme) => ({
+                                color: theme.palette.text.secondary,
+                                opacity: 1,
+                            }),
+                        }}
                         onKeyDown={(e) => {
-                            if (e.key === 'Escape' || (e.metaKey && e.key === 'Enter')) {
+                            if (e.key === 'Escape' || (e.metaKey && e.key === 'Enter') || (e.ctrlKey && e.key === 'Enter')) {
                                 e.preventDefault();
                                 saveAndClose();
                             }
