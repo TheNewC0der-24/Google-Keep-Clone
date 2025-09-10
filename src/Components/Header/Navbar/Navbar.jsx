@@ -51,21 +51,33 @@ const Header = ({ handleDrawer, open }) => {
                         pathName ? "" : <img src={logo} alt="logo" style={{ width: 30 }} />
                     }
                     <Heading>notedude</Heading>
-                    <Box sx={{ flexGrow: 1 }} />
+                    <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', mr: 10 }} />
+
                     <TextField
                         size="small"
                         placeholder="Search notes"
-                        variant="outlined"
+                        // variant="outlined"
                         onChange={(e) => {
                             const query = e.target.value;
                             window.dispatchEvent(new CustomEvent('notes-search', { detail: query }));
                         }}
+                        sx={{
+                            width: '300px',
+                            "& .MuiOutlinedInput-root": {
+                                backgroundColor: 'transparent',
+                                margin: '0 auto',
+                            },
+                            '& .MuiInputBase-root': {
+                                width: '100%',
+                                maxWidth: '300px',
+                            }
+                        }}
                         InputProps={{
-                            startAdornment: <InputAdornment position="start">🔎</InputAdornment>,
+                            // startAdornment: <InputAdornment position="start">🔎</InputAdornment>,
                         }}
                     />
                 </Box>
-            </Toolbar>
+            </Toolbar >
         </Navbar>
     )
 }
