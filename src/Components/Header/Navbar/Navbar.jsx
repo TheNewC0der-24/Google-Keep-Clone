@@ -46,37 +46,26 @@ const Header = ({ handleDrawer, open }) => {
                     sx={{ marginRight: 5 }}>
                     <MenuIcon />
                 </IconButton>
-                <Box sx={{ display: "flex", alignItems: "center", width: '100%' }}>
-                    {
-                        pathName ? "" : <img src={logo} alt="logo" style={{ width: 30 }} />
-                    }
-                    <Heading>notedude</Heading>
-                    <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', mr: 10 }} />
-
-                    <TextField
-                        size="small"
-                        placeholder="Search notes"
-                        // variant="outlined"
-                        onChange={(e) => {
-                            const query = e.target.value;
-                            window.dispatchEvent(new CustomEvent('notes-search', { detail: query }));
-                        }}
-                        sx={{
-                            width: '300px',
-                            "& .MuiOutlinedInput-root": {
-                                backgroundColor: 'transparent',
-                                margin: '0 auto',
-                            },
-                            '& .MuiInputBase-root': {
-                                width: '100%',
-                                maxWidth: '300px',
-                            }
-                        }}
-                        InputProps={{
-                            // startAdornment: <InputAdornment position="start">🔎</InputAdornment>,
-                        }}
-                    />
-                </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+  { pathName ? '' : <img src={logo} alt="logo" style={{ width: 30 }} /> }
+  <Heading>notedude</Heading>
+  {/* Flex container to center the search bar */}
+  <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+    <TextField
+      size="small"
+      placeholder="Search notes"
+      onChange={(e) => {
+        const query = e.target.value;
+        window.dispatchEvent(new CustomEvent('notes-search', { detail: query }));
+      }}
+      sx={{
+        width: '500px',
+        '& .MuiOutlinedInput-root': { backgroundColor: 'transparent', margin: '0 auto' },
+        '& .MuiInputBase-root': { width: '100%', maxWidth: '500px' }
+      }}
+    />
+  </Box>
+</Box>
             </Toolbar >
         </Navbar>
     )
