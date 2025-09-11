@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState, useCallback } from 'react';
 
-import Form from './Form';
+// import Form from './Form';
 import Note from './Note';
 import Editor from './Editor';
 
@@ -54,7 +54,7 @@ const Notes = () => {
     const filteredNotes = notes.filter(n => {
         const q = query.trim().toLowerCase();
         if (!q) return true;
-        return (n.title || '').toLowerCase().includes(q) || (n.text || '').toLowerCase().includes(q);
+        return (n.text || '').toLowerCase().includes(q);
     });
 
     // Global keyboard shortcuts
@@ -129,8 +129,24 @@ const Notes = () => {
                                         {filteredNotes.map((note, index) => (
                                             <ListItem key={note.id} selected={mode !== 'create' && index === selectedIndex} button onClick={() => { setSelectedIndex(index); setMode('neutral'); }} sx={{ alignItems: 'flex-start' }}>
                                                 <ListItemText
-                                                    primary={<Typography variant="subtitle1" noWrap>{note.title || '(no title)'}</Typography>}
-                                                    secondary={<Typography variant="body2" color="text.secondary" noWrap>{note.text}</Typography>}
+                                                    primary={(
+                                                        <Typography variant="subtitle1" noWrap>
+                                                            {(() => {
+                                                                const lines = (note.text || '').split(/\r?\n/);
+                                                                const first = (lines[0] || '').trim();
+                                                                return first || '(empty note)';
+                                                            })()}
+                                                        </Typography>
+                                                    )}
+                                                    secondary={(
+                                                        <Typography variant="body2" color="text.secondary" noWrap>
+                                                            {(() => {
+                                                                const lines = (note.text || '').split(/\r?\n/);
+                                                                const rest = lines.slice(1).join(' ').trim();
+                                                                return rest;
+                                                            })()}
+                                                        </Typography>
+                                                    )}
                                                 />
                                             </ListItem>
                                         ))}
@@ -176,7 +192,7 @@ const Notes = () => {
             }
 
             <Dialog open={openDialog} onClose={() => setOpenDialog(false)} fullWidth maxWidth="sm">
-                <DialogTitle>{openedNote?.title}</DialogTitle>
+                <DialogTitle>{(() => { const lines = (openedNote?.text || '').split(/\r?\n/); return (lines[0] || '').trim() || '(empty note)'; })()}</DialogTitle>
                 <DialogContent>
                     <Typography>{openedNote?.text}</Typography>
                 </DialogContent>

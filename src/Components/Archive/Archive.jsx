@@ -37,8 +37,17 @@ const Archive = ({ archiveNote }) => {
             onMouseLeave={() => setShowActions(false)}
         >
             <CardContent sx={{ wordWrap: "break-word" }}>
-                <Typography>{archiveNote.title}</Typography>
-                <Typography>{archiveNote.text}</Typography>
+                {(() => {
+                    const lines = (archiveNote.text || '').split(/\r?\n/);
+                    const first = (lines[0] || '').trim();
+                    const rest = lines.slice(1).join('\n');
+                    return (
+                        <>
+                            <Typography>{first}</Typography>
+                            {rest && <Typography>{rest}</Typography>}
+                        </>
+                    );
+                })()}
             </CardContent>
             <CardActions sx={{ display: "flex", justifyContent: "end", marginLeft: "auto" }}>
                 <Tooltip title="Unarchive">

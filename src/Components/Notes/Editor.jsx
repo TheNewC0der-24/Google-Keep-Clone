@@ -16,7 +16,6 @@ const Container = styled(Box)(({ theme }) => ({
 // Unified Note component: renders read-only view, edit, or create with identical styling
 // Props: mode: 'create' | 'edit' | 'view'; initialNote?; onSave(note); onCancel()
 const Editor = ({ mode = 'create', initialNote, onSave, onCancel }) => {
-    const titleRef = useRef();
     const textRef = useRef();
 
     useEffect(() => {
@@ -30,22 +29,18 @@ const Editor = ({ mode = 'create', initialNote, onSave, onCancel }) => {
     // Sync DOM content with selected note changes
     useEffect(() => {
         if (mode === 'view') return;
-        if (titleRef.current) titleRef.current.innerText = initialNote?.title || '';
         if (textRef.current) textRef.current.innerText = initialNote?.text || '';
     }, [initialNote, mode]);
 
     const save = useCallback(() => {
-        const currentTitle = titleRef.current?.innerText || '';
         const currentText = textRef.current?.innerText || '';
-        const trimmedTitle = currentTitle.trim();
         const trimmedText = currentText.trim();
-        if (!trimmedTitle && !trimmedText) {
+        if (!trimmedText) {
             if (onCancel) onCancel();
             return;
         }
         const note = {
             id: initialNote?.id || uuid(),
-            title: trimmedTitle,
             text: trimmedText,
         };
         onSave && onSave(note);
@@ -64,9 +59,8 @@ const Editor = ({ mode = 'create', initialNote, onSave, onCancel }) => {
                 if (mode === 'edit') {
                     save();
                 } else {
-                    const t = titleRef.current?.innerText || '';
                     const b = textRef.current?.innerText || '';
-                    if (!t.trim() && !b.trim()) {
+                    if (!b.trim()) {
                         onCancel && onCancel();
                     } else {
                         save();
@@ -89,7 +83,6 @@ const Editor = ({ mode = 'create', initialNote, onSave, onCancel }) => {
         return (
             <Container>
                 <Stack spacing={1.5}>
-                    <Typography variant="h6">{initialNote?.title || '(no title)'}</Typography>
                     <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>{initialNote?.text}</Typography>
                 </Stack>
             </Container>
@@ -99,21 +92,6 @@ const Editor = ({ mode = 'create', initialNote, onSave, onCancel }) => {
     return (
         <Container>
             <Stack spacing={1.5}>
-                <Typography
-                    variant="h6"
-                    contentEditable
-                    suppressContentEditableWarning
-                    ref={titleRef}
-                    sx={{
-                        outline: 'none',
-                        color: '#000',
-                        lineHeight: 1.25,
-                        minHeight: '1.2em',
-                    }}
-                    dir="ltr"
-                >
-                    {/* content set via ref */}
-                </Typography>
                 <Typography
                     variant="body1"
                     contentEditable
