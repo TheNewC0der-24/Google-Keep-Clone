@@ -125,6 +125,7 @@ const Form = ({ mode = 'create', forceOpen = false, initialNote = null, onSave, 
                                 placeholder='Title'
                                 variant='standard'
                                 InputProps={{ disableUnderline: true }}
+                                inputProps={{ dir: 'ltr' }}
                                 sx={{
                                     mb: 1,
                                     '& .MuiInputBase-input': (theme) => ({
@@ -156,6 +157,7 @@ const Form = ({ mode = 'create', forceOpen = false, initialNote = null, onSave, 
                         placeholder='Take a note...'
                         variant='standard'
                         InputProps={{ disableUnderline: true }}
+                        inputProps={{ dir: 'ltr' }}
                         onClick={() => {
                             openForm();
                         }}

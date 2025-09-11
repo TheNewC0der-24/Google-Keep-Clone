@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { Box, TextField, Stack, Typography } from '@mui/material';
+import React, { useEffect, useRef, useCallback } from 'react';
+import { Box, Stack, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { v4 as uuid } from 'uuid';
 
@@ -16,9 +16,6 @@ const Container = styled(Box)(({ theme }) => ({
 // Unified Note component: renders read-only view, edit, or create with identical styling
 // Props: mode: 'create' | 'edit' | 'view'; initialNote?; onSave(note); onCancel()
 const Editor = ({ mode = 'create', initialNote, onSave, onCancel }) => {
-    const [title, setTitle] = useState(initialNote?.title || '');
-    const [text, setText] = useState(initialNote?.text || '');
-
     const titleRef = useRef();
     const textRef = useRef();
 
@@ -30,17 +27,18 @@ const Editor = ({ mode = 'create', initialNote, onSave, onCancel }) => {
         }, 0);
     }, [mode]);
 
-    // Keep internal state in sync when the selected note changes
+    // Sync DOM content with selected note changes
     useEffect(() => {
-        if (initialNote) {
-            setTitle(initialNote.title || '');
-            setText(initialNote.text || '');
-        }
-    }, [initialNote]);
+        if (mode === 'view') return;
+        if (titleRef.current) titleRef.current.innerText = initialNote?.title || '';
+        if (textRef.current) textRef.current.innerText = initialNote?.text || '';
+    }, [initialNote, mode]);
 
     const save = useCallback(() => {
-        const trimmedTitle = title.trim();
-        const trimmedText = text.trim();
+        const currentTitle = titleRef.current?.innerText || '';
+        const currentText = textRef.current?.innerText || '';
+        const trimmedTitle = currentTitle.trim();
+        const trimmedText = currentText.trim();
         if (!trimmedTitle && !trimmedText) {
             if (onCancel) onCancel();
             return;
@@ -55,7 +53,7 @@ const Editor = ({ mode = 'create', initialNote, onSave, onCancel }) => {
         if (document.activeElement && typeof document.activeElement.blur === 'function') {
             document.activeElement.blur();
         }
-    }, [title, text, initialNote, onSave, onCancel]);
+    }, [initialNote, onSave, onCancel]);
 
     useEffect(() => {
         if (mode === 'view') return;
@@ -66,7 +64,9 @@ const Editor = ({ mode = 'create', initialNote, onSave, onCancel }) => {
                 if (mode === 'edit') {
                     save();
                 } else {
-                    if (!title.trim() && !text.trim()) {
+                    const t = titleRef.current?.innerText || '';
+                    const b = textRef.current?.innerText || '';
+                    if (!t.trim() && !b.trim()) {
                         onCancel && onCancel();
                     } else {
                         save();
@@ -87,14 +87,14 @@ const Editor = ({ mode = 'create', initialNote, onSave, onCancel }) => {
         };
         window.addEventListener('keydown', onKeyDown);
         return () => window.removeEventListener('keydown', onKeyDown);
-    }, [save, onCancel, title, text, mode]);
+    }, [save, onCancel, mode]);
 
     if (mode === 'view') {
         return (
             <Container>
                 <Stack spacing={1.5}>
-                    <Typography variant="h6">{title || '(no title)'}</Typography>
-                    <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>{text}</Typography>
+                    <Typography variant="h6">{initialNote?.title || '(no title)'}</Typography>
+                    <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>{initialNote?.text}</Typography>
                 </Stack>
             </Container>
         );
@@ -108,30 +108,30 @@ const Editor = ({ mode = 'create', initialNote, onSave, onCancel }) => {
                     contentEditable
                     suppressContentEditableWarning
                     ref={titleRef}
-                    onInput={(e) => setTitle(e.currentTarget.innerText)}
                     sx={{
                         outline: 'none',
                         color: '#000',
                         lineHeight: 1.25,
                         minHeight: '1.2em',
                     }}
+                    dir="ltr"
                 >
-                    {title}
+                    {/* content set via ref */}
                 </Typography>
                 <Typography
                     variant="body1"
                     contentEditable
                     suppressContentEditableWarning
                     ref={textRef}
-                    onInput={(e) => setText(e.currentTarget.innerText)}
                     sx={{
                         outline: 'none',
                         color: '#000',
                         whiteSpace: 'pre-wrap',
                         minHeight: '12em',
                     }}
+                    dir="ltr"
                 >
-                    {text}
+                    {/* content set via ref */}
                 </Typography>
             </Stack>
         </Container>
@@ -139,5 +139,3 @@ const Editor = ({ mode = 'create', initialNote, onSave, onCancel }) => {
 };
 
 export default Editor;
-
-
