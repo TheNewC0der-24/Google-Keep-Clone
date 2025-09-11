@@ -74,13 +74,9 @@ const Editor = ({ mode = 'create', initialNote, onSave, onCancel }) => {
                 }
                 return;
             }
-            // In edit mode, plain Enter should save (not insert newline)
-            if (mode === 'edit' && e.key === 'Enter' && !e.shiftKey && !e.metaKey && !e.ctrlKey) {
-                e.preventDefault();
-                save();
-                return;
-            }
-            if ((e.shiftKey && e.key === 'Enter') || ((e.metaKey || e.ctrlKey) && e.key === 'Enter')) {
+            // Enter should insert a newline, never save
+            // Keep Cmd/Ctrl+Enter as an explicit save shortcut
+            if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
                 e.preventDefault();
                 save();
             }
