@@ -127,7 +127,7 @@ const Notes = () => {
                                 <Grid item xs={12} md={4} lg={3} sx={{ borderRight: '1px solid', borderColor: 'divider' }}>
                                     <List sx={{ p: 0 }}>
                                         {filteredNotes.map((note, index) => (
-                                            <ListItem key={note.id} selected={index === selectedIndex} button onClick={() => { setSelectedIndex(index); setMode('neutral'); }} sx={{ alignItems: 'flex-start' }}>
+                                            <ListItem key={note.id} selected={mode !== 'create' && index === selectedIndex} button onClick={() => { setSelectedIndex(index); setMode('neutral'); }} sx={{ alignItems: 'flex-start' }}>
                                                 <ListItemText
                                                     primary={<Typography variant="subtitle1" noWrap>{note.title || '(no title)'}</Typography>}
                                                     secondary={<Typography variant="body2" color="text.secondary" noWrap>{note.text}</Typography>}
@@ -143,6 +143,8 @@ const Notes = () => {
                                                 mode='create'
                                                 onSave={(note) => {
                                                     setNotes(prev => [note, ...prev]);
+                                                    // Highlight the newly created note and show read-only view
+                                                    setSelectedIndex(0);
                                                     setMode('neutral');
                                                 }}
                                                 onCancel={() => setMode('neutral')}
